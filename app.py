@@ -1,6 +1,8 @@
 import streamlit as st
 import sqlite3
 import datetime
+import pytz
+JST = pytz.timezone("Asia/Tokyo")
 
 # ==============================
 # DB 接続＆初期化
@@ -75,7 +77,7 @@ def add_task(conn, name, point_value):
 
 def log_points(conn, task_id, points):
     cur = conn.cursor()
-    now = datetime.datetime.now().isoformat(timespec="seconds")
+    now = datetime.datetime.now(JST).isoformat(timespec="seconds")
     cur.execute(
         "INSERT INTO points_log (task_id, points, done_at) VALUES (?, ?, ?)",
         (task_id, points, now),
@@ -89,7 +91,7 @@ def save_or_update_diary(conn, entry_date, mood, content):
     """
     cur = conn.cursor()
     date_str = entry_date.isoformat()
-    now = datetime.datetime.now().isoformat(timespec="seconds")
+    now = datetime.datetime.now(JST).isoformat(timespec="seconds")
 
     cur.execute(
         "INSERT INTO diary_entries (entry_date, mood, content, created_at) VALUES (?, ?, ?, ?)",
