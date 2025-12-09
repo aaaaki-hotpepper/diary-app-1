@@ -162,7 +162,7 @@ def main():
 
         entry_date = st.date_input("日付", value=today)
         entry_time = st.time_input("時間（任意）", value=now_time)
-        mood = st.selectbox("今日の気分", ["😀 いい感じ", "🙂 ふつう", "😕 いまいち", "😭 つらい"])
+        mood = st.selectbox("今日の気分", ["💯 超最高", "😀 いい感じ", "☺️ おつかれ", "💢 イラ", "😕 いまいち", "😭 つらい", "無"])
         content = st.text_area("今日あったこと・感じたこと", height=200)
 
         if st.button("この内容で保存する"):
@@ -210,17 +210,20 @@ def main():
         else:
             for entry_date, entry_time, mood, content, created_at in diaries:
                 # 時刻ラベル
-                if entry_time:
-                    time_label = entry_time[:5]  # "HH:MM"
-                else:
-                    time_label = created_at[11:16] if created_at else ""
+                   
+    # ---- タイトル（見出し） ----
+snippet_source = (content or "").replace("\n", " ").strip()
+snippet = snippet_source[:5]  # 先頭5文字だけ取り出す
 
-                title = f"{entry_date} {time_label} ｜ {mood}"
+if snippet:
+    title = f"{entry_date} {time_label} | {mood} | {snippet}"
+else:
+    title = f"{entry_date} {time_label} | {mood}"
 
-                with st.expander(title):
-                    st.write(content if content else "（本文なし）")
-                    st.caption(f"保存日時: {created_at}")
-
+with st.expander(title):
+    st.write(content if content else "（本文なし）")
+    st.caption(f"保存日時: {created_at}")
+    
     # -------------------------
     # 4) タスク設定
     # -------------------------
