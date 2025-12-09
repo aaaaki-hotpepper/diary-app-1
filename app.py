@@ -15,15 +15,16 @@ def get_connection():
 def init_db(conn):
     cur = conn.cursor()
 
-    # 日記テーブル
+           # 日記テーブル
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS diary_entries (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        entry_date TEXT NOT NULL,
-        mood TEXT,
-        content TEXT,
-        created_at TEXT NOT NULL
-    )
+        CREATE TABLE IF NOT EXISTS diary_entries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            entry_date TEXT NOT NULL,
+            entry_time TEXT,
+            mood TEXT,
+            content TEXT,
+            created_at TEXT NOT NULL
+        )
     """)
 
     # タスクテーブル（嫌なこと・めんどいこと）
