@@ -202,29 +202,36 @@ def main():
         total = get_total_points(conn)
         st.metric("いまの合計ポイント", f"{total} pt")
 
-        st.subheader("最近の日記（直近10件）")
-        diaries = get_recent_diaries(conn, limit=10)
+          st.subheader("最近の日記（直近10件）")
+    diaries = get_recent_diaries(conn, limit=10)
 
-        if not diaries:
-            st.info("まだ日記がありません。「今日の日記を書く」から始めてみよう。")
-        else:
-            for entry_date, entry_time, mood, content, created_at in diaries:
-                # 時刻ラベル
-                   
-      # ---- タイトル用：本文から最初の5文字を抜き出す ----
-    snippet_source = (content or "").replace("\n", " ").strip()
-    snippet = snippet_source[:5]
-
-    if snippet:
-        title = f"{entry_date} {time_label} | {mood} | {snippet}"
+    if not diaries:
+        st.info("まだ日記がありません。『今日の日記を書く』から始めてみよう。")
     else:
-        title = f"{entry_date} {time_label} | {mood}"
+        for entry_date, entry_time, mood, content, created_at in diaries:
+            # ---- 時刻の表示ロジック ----
+            if entry_time:
+                time_label = entry_time[:5]  # 例: "14:35:12" → "14:35"
+            else:
+                # entry_time がない（古いデータ）の場合は created_at から取得
+                time_label = created_at[11:16] if created_at else ""
 
-    with st.expander(title):
-        st.write(content if content else "（本文なし）")
-        st.caption(f"保存日時: {created_at}")
+            # ---- 日記本文の先頭5文字をタイトルに入れる ----
+            snippet_source = (content or "").replace("\n", " ").strip()
+            snippet = snippet_source[:5]  # 先頭5文字だけ取り出す
+
+            # ---- タイトル（見出し）----
+            if snippet:
+                title = f"{entry_date} {time_label} | {mood} | {snippet}"
+            else:
+                title = f"{entry_date} {time_label} | {mood}"
+
+            # ---- 展開エリア ----
+            with st.expander(title):
+                st.write(content if content else "（本文なし）")
+                st.caption(f"保存日時: {created_at}")
+
     
-    # -------------------------
     # 4) タスク設定
     # -------------------------
     elif page == "タスク設定":
