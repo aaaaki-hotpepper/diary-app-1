@@ -197,12 +197,12 @@ def main():
     # 3) 履歴・合計ポイントを見る
     # -------------------------
     elif page == "履歴・合計ポイントを見る":
-        st.header("📊 履歴・ポイント状況")
+    st.header("📊 履歴・ポイント状況")
 
-        total = get_total_points(conn)
-        st.metric("いまの合計ポイント", f"{total} pt")
+    total = get_total_points(conn)
+    st.metric("いまの合計ポイント", f"{total} pt")
 
-          st.subheader("最近の日記（直近10件）")
+    st.subheader("最近の日記（直近10件）")
     diaries = get_recent_diaries(conn, limit=10)
 
     if not diaries:
@@ -230,8 +230,6 @@ def main():
             with st.expander(title):
                 st.write(content if content else "（本文なし）")
                 st.caption(f"保存日時: {created_at}")
-
-    
     # 4) タスク設定
     # -------------------------
     elif page == "タスク設定":
