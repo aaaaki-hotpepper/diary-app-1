@@ -58,19 +58,45 @@ def init_db(conn):
         """
     )
 
-    # ポイント履歴テーブル（貯める＆使う両方）
+        # ポイント履歴テーブル（貯める＆使う両方）
+    # 既に古い形式の points_log がある場合は、一度削除して作り直す
     cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS points_log (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            action_type TEXT NOT NULL,       -- "earn" or "spend"
-            task_or_reason TEXT NOT NULL,    -- 何の項目か
-            points INTEGER NOT NULL,         -- 加算はプラス、消費はマイナス
-            note TEXT,                       -- コメント / メモ
-            created_at TEXT NOT NULL
-        )
-        """
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='points_log'"
     )
+    exists = cur.fetchone()
+
+    if exists:
+        # いまの points_log のカラム構成を確認
+        cur.execute("PRAGMA table_info(points_log)")
+        cols = [row[1] for row in cur.fetchall()]
+        expected_cols = [
+            "id",
+            "action_type",
+            "task_or_reason",
+            "points",
+            "note",
+            "created_at",
+        ]
+
+        # 想定と違う = 古いテーブル定義なので作り直す
+        if cols != expected_cols:
+            cur.execute("DROP TABLE points_log")
+            exists = None
+
+    # テーブルがまだ無い場合だけ、新しい形で作成
+    if not exists:
+        cur.execute(
+            """
+            CREATE TABLE points_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                action_type TEXT NOT NULL,       -- "earn" or "spend"
+                task_or_reason TEXT NOT NULL,    -- 何の項目か
+                points INTEGER NOT NULL,         -- 加算はプラス、消費はマイナス
+                note TEXT,                       -- コメント / メモ
+                created_at TEXT NOT NULL
+            )
+            """
+        )
 
     # デフォルトタスクを少しだけ入れておく（空のときだけ）
     cur.execute("SELECT COUNT(*) FROM tasks")
