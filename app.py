@@ -211,18 +211,18 @@ def main():
             for entry_date, entry_time, mood, content, created_at in diaries:
                 # 時刻ラベル
                    
-    # ---- タイトル（見出し） ----
-snippet_source = (content or "").replace("\n", " ").strip()
-snippet = snippet_source[:5]  # 先頭5文字だけ取り出す
+      # ---- タイトル用：本文から最初の5文字を抜き出す ----
+    snippet_source = (content or "").replace("\n", " ").strip()
+    snippet = snippet_source[:5]
 
-if snippet:
-    title = f"{entry_date} {time_label} | {mood} | {snippet}"
-else:
-    title = f"{entry_date} {time_label} | {mood}"
+    if snippet:
+        title = f"{entry_date} {time_label} | {mood} | {snippet}"
+    else:
+        title = f"{entry_date} {time_label} | {mood}"
 
-with st.expander(title):
-    st.write(content if content else "（本文なし）")
-    st.caption(f"保存日時: {created_at}")
+    with st.expander(title):
+        st.write(content if content else "（本文なし）")
+        st.caption(f"保存日時: {created_at}")
     
     # -------------------------
     # 4) タスク設定
